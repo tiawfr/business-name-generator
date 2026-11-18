@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Business Name Generator</title>
+<style>
+:root{--ink:#26332d;--muted:#64736a;--green:#345c49;--pale:#edf3ee;--line:#dce5dd;--cream:#fafbf8}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:850px;margin:32px auto;padding:20px}header{text-align:center;margin-bottom:26px}h1{font-size:clamp(2rem,6vw,3rem);line-height:1.1;margin:0 0 10px}header p{color:var(--muted);max-width:620px;margin:auto}
+.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:22px;margin:18px 0;box-shadow:0 5px 20px #2035280a}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:15px}label{display:block;font-weight:650;font-size:.92rem;margin-bottom:6px}select,input{width:100%;padding:12px;border:1px solid #cbd7cd;border-radius:10px;background:white;color:var(--ink);font:inherit}
+button{border:0;border-radius:10px;padding:12px 17px;background:var(--green);color:white;font:inherit;font-weight:650;cursor:pointer}button.secondary{background:var(--pale);color:var(--green)}button.small{padding:7px 11px;font-size:.88rem}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.results{display:grid;gap:10px}.item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#fff}.name{font-weight:700;font-size:1.05rem;overflow-wrap:anywhere}.item-actions{display:flex;gap:7px;flex-shrink:0}.item-actions button{padding:7px 10px;font-size:.84rem}
+#message{min-height:1.5em;color:var(--green);font-size:.92rem;margin-top:10px}.note{font-size:.88rem;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px}
+@media(max-width:520px){main{padding:12px}.panel{padding:16px}.item{align-items:flex-start;flex-direction:column}.item-actions{width:100%}}
+</style>
+</head>
+<body><main>
+<header><h1>Business Name Generator</h1><p>Explore name ideas for your new business. Choose a category and style, add a few keywords, and generate suggestions you can save or copy.</p></header>
+<section class="panel">
+<div class="grid">
+<div><label for="category">Business category</label><select id="category"><option value="general">Any business</option><option value="beauty">Beauty</option><option value="creative">Creative services</option><option value="food">Food and drink</option><option value="home">Home services</option><option value="online">Online shop</option><option value="professional">Professional services</option><option value="wellness">Wellness</option><option value="pets">Pets</option><option value="fashion">Fashion</option><option value="garden">Garden</option></select></div>
+<div><label for="style">Name style</label><select id="style"><option value="modern">Modern</option><option value="elegant">Elegant</option><option value="friendly">Friendly</option><option value="creative">Creative</option><option value="professional">Professional</option><option value="playful">Playful</option><option value="natural">Natural</option></select></div>
+<div><label for="length">Name length</label><select id="length"><option value="any">Any length</option><option value="short">Short names</option><option value="two">Two words</option></select></div>
+<div><label for="suffix">Add a business word</label><select id="suffix"><option value="">No extra word</option><option>Studio</option><option>Co.</option><option>Collective</option><option>Works</option><option>House</option><option>Services</option><option>Atelier</option><option>Company</option></select></div>
+</div>
+<div style="margin-top:15px"><label for="keywords">Keywords (optional)</label><input id="keywords" maxlength="60" placeholder="e.g. oak, bloom, Dublin, your name"></div>
+<div class="actions"><button id="generate">Generate 12 names</button><button class="secondary" id="clear">Clear results</button></div>
+<p id="message" aria-live="polite"></p>
+</section>
+<section class="panel"><h2 style="margin-top:0">Your name ideas</h2><div id="results" class="results"><p class="note">Your suggestions will appear here. Generate a new set whenever you like.</p></div><div class="actions"><button class="secondary" id="copyAll">Copy all names</button><button class="secondary" id="showFaves">Show favourites</button></div></section>
+<section class="panel"><h2 style="margin-top:0">A quick reminder</h2><p class="note">These are brainstorming suggestions, not checked business names. Before choosing one, check the relevant company or business-name register, trademarks, website domains and social media usernames. A name being suggested here does not mean it is legally available.</p></section>
+<footer>Business Name Generator</footer>
+</main>
+<script>
+const words={
+general:{modern:['Bright','North','True','Next','Open','Good','Urban'],elegant:['Oak','Silver','Elm','Crown','Ivory','Grand'],friendly:['Little','Happy','Neighbour','Sunny','Kind','Hello'],creative:['Wild','Mosaic','Canvas','Imagine','Paper','Wonder'],professional:['Clear','Summit','Prime','Trusted','Core','Forward'],playful:['Doodle','Jolly','Bumble','Witty','Pop','Zippy'],natural:['Willow','Clover','Meadow','Fern','Wildflower','River']},
+beauty:{modern:['Glow','Aura','Bare','Lustre','Muse'],elegant:['Velvet','Pearl','Luna','Opal','Belle'],friendly:['Blush','Lovely','Daisy','Honey'],creative:['Muse','Colour','Bloom','Canvas'],professional:['Pure','Refined','Polished'],playful:['Peachy','Dolly','Sparkle'],natural:['Botanical','Petal','Olive','Wild Rose']},
+creative:{modern:['Pixel','Bright','Form','Frame'],elegant:['Muse','Atelier','Ivory','Arthouse'],friendly:['Happy','Little','Kindred'],creative:['Mosaic','Ink','Wonder','Wild'],professional:['Concept','Studio','Craft'],playful:['Doodle','Pop','Jumble'],natural:['Paper','Willow','Earth','Pressed']},
+food:{modern:['Gather','Fresh','Daily','Local'],elegant:['Saffron','Fig','Olive','Supper'],friendly:['Honey','Sunday','Goodness'],creative:['Whisk','Crumb','Spoon'],professional:['Table','Kitchen','Provisions'],playful:['Sprinkle','Nibble','Peachy'],natural:['Harvest','Orchard','Meadow','Thyme']},
+home:{modern:['Neat','Fresh','Bright','Urban'],elegant:['Oak','Hearth','Haven','House'],friendly:['Helpful','Homely','Neighbour'],creative:['Nest','Canvas','Revive'],professional:['Reliable','Prime','Complete'],playful:['Tidy','Handy','Happy'],natural:['Willow','Stone','Cedar','Meadow']},
+online:{modern:['Click','Nova','Pixel','Nexa'],elegant:['Edit','Curated','Maison'],friendly:['Hello','Happy','Little'],creative:['Mosaic','Found','Wonder'],professional:['Market','Supply','Select'],playful:['Pop','Pick','Doodle'],natural:['Fern','Olive','Earth','Bloom']},
+professional:{modern:['Clear','Nexa','Forward','Bright'],elegant:['Sterling','Crown','Westbury'],friendly:['People','Together','Helpful'],creative:['Insight','Mosaic','Think'],professional:['Summit','Pinnacle','Core','Trusted'],playful:['Clever','Brightside','Thinker'],natural:['Grounded','Oak','True North']},
+wellness:{modern:['Aura','Align','Balance','Renew'],elegant:['Luna','Serene','Willow'],friendly:['Kindred','Calm','Gentle'],creative:['Bloom','Soul','Haven'],professional:['Wellbeing','Vital','Balance'],playful:['Sunny','Happy','Glow'],natural:['Sage','Fern','Meadow','Wild']},
+pets:{modern:['Paw','Urban','Fetch'],elegant:['Bramble','Pearl','Duke'],friendly:['Happy','Best Friend','Poppy'],creative:['Whisker','Wag','Pawprint'],professional:['Pawsome','Trusted','Good Dog'],playful:['Bouncy','Biscuit','Zoomies'],natural:['Clover','Muddy','Willow','Woodland']},
+fashion:{modern:['Thread','Mode','Edit','Form'],elegant:['Belle','Velvet','Maison','Pearl'],friendly:['Darling','Lovely','Sunday'],creative:['Muse','Mosaic','Stitch'],professional:['Label','Wardrobe','Collective'],playful:['Dolly','Peachy','Dazzle'],natural:['Linen','Willow','Olive','Cotton']},
+garden:{modern:['Green','Grow','Root'],elegant:['Clover','Rosewood','Willow'],friendly:['Happy','Little','Sunny'],creative:['Wildflower','Leaf','Bloom'],professional:['Groundwork','Evergreen','Garden'],playful:['Daisy','Bumble','Sprout'],natural:['Fern','Meadow','Moss','Orchard']}
+};
+const nouns=['Studio','House','Works','& Co.','Collective','Corner','Company','Place','Craft','Lab','Services','Supply'];
+let current=[],favourites=[];
+const $=id=>document.getElementById(id);
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function makeNames(){const cat=$('category').value,style=$('style').value,custom=$('keywords').value.trim().split(/[ ,]+/).filter(Boolean),suffix=$('suffix').value,len=$('length').value;const pool=words[cat]||words.general;let out=new Set(),tries=0;while(out.size<12&&tries<300){tries++;let a=pick(pool[style]||words.general[style]),b=custom.length?pick(custom):pick(nouns);let name=Math.random()<.5?a+' '+b:b+' '+a;if(Math.random()<.22)name=a;if(suffix)name=name.replace(/\s+(Studio|House|Works|Collective|Company|Services)$/,'')+' '+suffix;if(len==='short'&&name.length>15)continue;if(len==='two'&&name.trim().split(/\s+/).length!==2)continue;out.add(name)}current=[...out];render(current);$('message').textContent='Here are your new suggestions. Try changing the options for a different set.'}
+function render(list){const el=$('results');el.innerHTML='';if(!list.length){el.innerHTML='<p class="note">No names to show yet. Generate some ideas first.</p>';return}list.forEach(n=>{const row=document.createElement('div');row.className='item';const name=document.createElement('span');name.className='name';name.textContent=n;const actions=document.createElement('div');actions.className='item-actions';const copy=document.createElement('button');copy.className='secondary small';copy.textContent='Copy';copy.onclick=()=>copyText(n);const fav=document.createElement('button');fav.className='secondary small';fav.textContent=favourites.includes(n)?'♥ Saved':'♡ Save';fav.onclick=()=>{if(favourites.includes(n))favourites=favourites.filter(x=>x!==n);else favourites.push(n);render(list)};actions.append(copy,fav);row.append(name,actions);el.append(row)})}
+async function copyText(t){try{await navigator.clipboard.writeText(t);$('message').textContent='Copied.'}catch(e){$('message').textContent='Copy is unavailable in this browser. You can select and copy the name instead.'}}
+$('generate').onclick=makeNames;$('clear').onclick=()=>{current=[];render([]);$('message').textContent='Results cleared.'};$('copyAll').onclick=()=>copyText(current.join('\n'));$('showFaves').onclick=()=>{render(favourites);$('message').textContent='Showing saved favourites for this visit.'};
+</script></body></html>
